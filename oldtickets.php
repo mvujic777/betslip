@@ -6,11 +6,11 @@ session_start();
 require_once "config.php"; 
 $ticket_list='';
 try{
-	$sql_ticket_list='SELECT IDTicket, ticket_start_date, ticket_end_date FROM Ticket';
+	$sql_ticket_list='SELECT id, ticket_start_date, ticket_end_date FROM Ticket';
 	$result_ticket_list=$pdo->query($sql_ticket_list);
 	if ($result_ticket_list->rowCount()>0){
 		while ($row=$result_ticket_list->fetch()){
-			$ticket_list=$ticket_list.'<tr><td>'.date('D d H:i ',strtotime($row['ticket_start_date'])).'</td><td>'.date('D d H:i ',strtotime($row['ticket_end_date'])).'</td><td><a href="ticketresults.php?detailid='.$row['IDTicket'].'">Details</a> </td></tr>';
+			$ticket_list=$ticket_list.'<tr><td>'.date('M d H:i ',strtotime($row['ticket_start_date'])).'</td><td>'.date('M d H:i ',strtotime($row['ticket_end_date'])).'</td><td><a href="ticketresults.php?detailid='.$row['id'].'">Details</a> </td></tr>';
 		}
 	} else {
 		$ticket_list='0 tickets in database';
@@ -21,12 +21,12 @@ try{
 
 $user_list='';
 try {
-	$sql_user_list='SELECT username, IDUser FROM User';
+	$sql_user_list='SELECT username, id FROM Member';
 	$result_user_list=$pdo->query($sql_user_list);
-	if ($result_user_list->rowCount($sql_user_list)){
+	if ($result_user_list->rowCount()>0){
 		while($row=$result_user_list->fetch()){
-			if ($row['username'] != 'usermod') {
-			$user_list=$user_list.'<tr><td>'.$row['username'].'</td><td><a href="userresult.php?detailid='.$row['IDUser'].'">Details</a></td></tr>';
+			if ($row['username'] != 'admin') {
+			$user_list=$user_list.'<tr><td>'.$row['username'].'</td><td><a href="userresult.php?detailid='.$row['id'].'">Details</a></td></tr>';
 			}
 		}
 	} else {

@@ -18,7 +18,7 @@ if (isset($_GET["updategame"])){
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 	
 	try { 
-	$sql_update_game='UPDATE Game SET game_name=:game_name, start_date=:start_date, end_date=:end_date WHERE IDGame='.$_REQUEST['updategame'];
+	$sql_update_game='UPDATE Game SET game_name=:game_name, game_start_date=:start_date, game_end_date=:end_date WHERE id='.$_REQUEST['updategame'];
 	$statement=$pdo->prepare($sql_update_game);
 	$statement->bindParam(':game_name',$_REQUEST['game_name']);
 	$statement->bindParam(':start_date',$_REQUEST['start_date']);
@@ -37,13 +37,13 @@ $gamename_list='';
 
 try{
 
-	$sql_gamename='SELECT game_name, start_date, end_date FROM Game WHERE IDGame='.$id_game;
+	$sql_gamename='SELECT game_name, game_start_date, game_end_date FROM Game WHERE id='.$id_game;
 	$result_gamename=$pdo->query($sql_gamename);
 
 	if ($result_gamename->rowCount()>0){
 	
 		while ($row=$result_gamename->fetch()){
-			$gamename_list=$gamename_list.'<input  name="game_name" value="'.$row['game_name'].'" /></br> <input type="datetime-local" name="start_date" value="'.$row['start_date'].'" /> </br> <input type="datetime-local" name="end_date" value="'.$row['end_date'].'"/>';
+			$gamename_list=$gamename_list.'<input  name="game_name" value="'.$row['game_name'].'" /></br> <input type="datetime-local" name="start_date" value="'.$row['game_start_date'].'" /> </br> <input type="datetime-local" name="end_date" value="'.$row['game_end_date'].'"/>';
 		}
 	}	
 	else {

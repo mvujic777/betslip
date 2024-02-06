@@ -22,11 +22,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 }
 $leaderboard_list='';
 try {
-	$sql_leaderboard_list='SELECT IDLeaderboard, l_start, l_end FROM Leaderboard';
+	$sql_leaderboard_list='SELECT id, l_start, l_end FROM Leaderboard';
 	$result_leaderboard_list=$pdo->query($sql_leaderboard_list);
 	if ($result_leaderboard_list->rowCount()>0) {
 		while ($row=$result_leaderboard_list->fetch()){
-			$leaderboard_list=$leaderboard_list.'<tr><td>'.$row['l_start'].'</td><td>'.$row['l_end'].'</td><td><a href="/leaderboarddetails.php?detailid='.$row['IDLeaderboard'].'">Details</a></td><td><a href="delete.php?deletelboard='.$row['IDLeaderboard'].'">Delete</a>';
+			$leaderboard_list=$leaderboard_list.'<tr><td>'.$row['l_start'].'</td><td>'.$row['l_end'].'</td><td><a href="/leaderboarddetails.php?detailid='.$row['id'].'">Details</a></td><td><a href="delete.php?deletelboard='.$row['id'].'">Delete</a>';
 		}
 	} else {
 		$leaderboard_list= '<tr><td>Nothing in database</td></tr>';

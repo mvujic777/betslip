@@ -10,15 +10,15 @@ if (isset($_GET['detailid'])) {
 
 $ticket_users='';
 try {
-	$sql_ticket_users='SELECT DISTINCT (username), UserTicket.IDUser FROM UserTicket INNER JOIN User ON UserTicket.IDUser=User.IDUser WHERE IDTicket='.$detailid;
+	$sql_ticket_users='SELECT DISTINCT (username), id_member FROM MemberTicket INNER JOIN Member ON MemberTicket.id_member = Member.id INNER JOIN TicketDetails ON MemberTicket.id_game_details = TicketDetails.id_game_details WHERE id_ticket='.$detailid;
 	$result_ticket_users=$pdo->query($sql_ticket_users);
 	if ($result_ticket_users->rowCount()>0) {
 		while ($row=$result_ticket_users->fetch()){
-			$ticket_users=$ticket_users.'<tr><td><a href="userresult.php?detailid='.$row['IDUser'].'">'.$row['username'].'</a></td></tr>';
+			$ticket_users=$ticket_users.'<tr><td><a href="userresult.php?detailid='.$row['id_member'].'">'.$row['username'].'</a></td></tr>';
 				$ticket_details='';
 				$win_points=0;
 				$max_points=0;
-				$sql_ticket_details='SELECT game_name, bet_name, bv.bet_value as userbet, BetValue.bet_value AS winbet FROM UserTicket INNER JOIN GameDetails on UserTicket.IDGD=GameDetails.IDGD INNER JOIN Game ON GameDetails.IDGame=Game.IDGame INNER JOIN BetName ON GameDetails.IDBetName=BetName.IDBetName INNER JOIN BetValue AS bv ON UserTicket.User_IDBetValue=bv.IDBetValue INNER JOIN BetValue ON GameDetails.IDBetValue=BetValue.IDBetValue WHERE IDTicket='.$detailid.' AND UserTicket.IDUser='.$row['IDUser'];
+				$sql_ticket_details='SELECT game_name,bet_name, BetValue.bet_value as winbet, bv.bet_value as userbet FROM MemberTicket INNER JOIN TicketDetails ON MemberTicket.id_game_details=TicketDetails.id_game_details INNER JOIN GameDetails ON TicketDetails.id_game_details=GameDetails.id INNER JOIN Game ON GameDetails.id_game=Game.id INNER JOIN BetName ON GameDetails.id_bet_name=BetName.id INNER JOIN BetValue ON GameDetails.id_bet_value=BetValue.id INNER JOIN BetValue as bv ON MemberTicket.id_bet_value=bv.id WHERE id_ticket='.$detailid.' AND id_member='.$row['id_member'];
 				$result_ticket_details=$pdo->query($sql_ticket_details);
 				
 					while($row1=$result_ticket_details->fetch()){
@@ -28,7 +28,7 @@ try {
 						$ticket_details=$ticket_details.'<td>WIN</td></tr>';
 						$win_points=$win_points+10;
 						$max_points=$max_points+10;
-						} elseif ($row1['winbet']=='In play'){
+						} elseif ($row1['winbet']=='in play'){
 						$ticket_details=$ticket_details.'<td>in play</td></tr>';
 						$max_points=$max_points+10;
 						} else {
@@ -102,6 +102,7 @@ try {
 								<!-- Content -->
 									<div id="content">
 										<section class="last">
+										<div style="overflow-x:auto;">
 											<table>
 											<thead>
 												<tr>
@@ -116,6 +117,7 @@ try {
 											<?php echo $ticket_users; ?>
 											</tbody>
 											</table>
+										</div>
 										</section>
 									</div>
 

@@ -24,7 +24,7 @@ $login_err = '';
  
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-
+	//Check on server side even it can be input element required
     // Check if username is empty
     if(empty(trim($_POST["username"]))){
         $username_err = "Please enter username.";
@@ -44,27 +44,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Validate credentials if error variable are empty means not error variable are full (true)
     if(empty($username_err) && empty($password_err)){
         // Prepare a select statement
-        $sql = "SELECT IDUser, username, password, Role FROM User WHERE username = :username";
+        $sql = "SELECT id, username, password, role FROM RoleMember WHERE username =:username";
 		
         
         if($stmt = $pdo->prepare($sql)){
             // Bind variables to the prepared statement as parameters
-            $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
-            
-            // Set parameters
-            $param_username = trim($_POST["username"]);
-			
-            
+            $stmt->bindParam(":username", $username);
+                       
             // Attempt to execute the prepared statement
             if($stmt->execute()){
                 // Check if username exists, if yes then verify password
 				
                 if($stmt->rowCount() == 1){
                     if($row = $stmt->fetch()){
-                        $id = $row['IDUser'];
+                        $id = $row['id'];
                         $username = $row['username'];
                         $hashed_password = $row['password'];
-						$role_number=$row['Role'];
+						$role_number=$row['role'];
                         if($password == $hashed_password){
                             // Password is correct, so start a new session
                             session_start();
@@ -73,7 +69,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             $_SESSION["loggedin"] = true;
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;
-							$_SESSION["rolenumber"] = $role_number;
+							$_SESSION["role_number"] = $role_number;
                             
                             // Redirect user to index page
                             header("location: index.php");

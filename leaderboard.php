@@ -6,17 +6,17 @@ session_start();
 require_once "config.php"; 
 $leaderboard_list='';
 try {
-	$sql_leaderboard_list='SELECT IDLeaderboard, l_start, l_end FROM Leaderboard';
+	$sql_leaderboard_list='SELECT id, l_start, l_end FROM Leaderboard';
 	$result_leaderboard_list=$pdo->query($sql_leaderboard_list);
 	if ($result_leaderboard_list->rowCount()>0) {
 		while ($row=$result_leaderboard_list->fetch()){
-			$leaderboard_list=$leaderboard_list.'<tr><td>'.date('M d ',strtotime($row['l_start'])).'</td><td>'.date('M d ',strtotime($row['l_end'])).'</td><td><a href="leaderboarddetails.php?detailid='.$row['IDLeaderboard'].'">Details</a>';
+			$leaderboard_list=$leaderboard_list.'<tr><td>'.date('M d ',strtotime($row['l_start'])).'</td><td>'.date('M d ',strtotime($row['l_end'])).'</td><td><a href="leaderboarddetails.php?detailid='.$row['id'].'">Details</a>';
 		}
 	} else {
 		$leaderboard_list= '<tr><td>Nothing in database</td></tr>';
 	}
 } catch(PDOException $e){
-    die("ERROR: Could not able to execute $sql_leaderboard_list. " . $e->getMessage());
+    die('ERROR: Could not able to execute $sql_leaderboard_list. ' . $e->getMessage());
 	}
 ?>
 <!DOCTYPE HTML>

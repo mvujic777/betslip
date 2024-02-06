@@ -11,11 +11,11 @@ require_once "../config.php";
 
 $num_per_ticket='';
 try {
-	$sql_num_per_ticket='SELECT ticket_start_date, ticket_end_date, UserTicket.IDTicket, COUNT(DISTINCT IDUser) AS num_players FROM UserTicket INNER JOIN Ticket ON UserTicket.IDTicket=Ticket.IDTicket GROUP BY UserTicket.IDTicket';
+	$sql_num_per_ticket='SELECT ticket_start_date, ticket_end_date, TicketDetails.id_ticket, COUNT(DISTINCT MemberTicket.id_member) AS num_players FROM MemberTicket iNNER JOIN TicketDetails ON MemberTicket.id_game_details=TicketDetails.id_game_details INNER JOIN Ticket ON TicketDetails.id_ticket = Ticket.id GROUP BY TicketDetails.id_ticket';
 	$result_num_per_ticket=$pdo->query($sql_num_per_ticket);
 	if ($result_num_per_ticket->rowCount()>0){
 		while($row=$result_num_per_ticket->fetch()){
-			$num_per_ticket=$num_per_ticket.'<tr><td>'.date('D d H:i ',strtotime($row['ticket_start_date'])).'</td><td>'.date('D d H:i ',strtotime($row['ticket_end_date'])).'</td><td>'.$row['num_players'].'</td><td><a href="ticketdetails.php?detailid='.$row['IDTicket'].'">Details</a></td></tr>';
+			$num_per_ticket=$num_per_ticket.'<tr><td>'.date('D d H:i ',strtotime($row['ticket_start_date'])).'</td><td>'.date('D d H:i ',strtotime($row['ticket_end_date'])).'</td><td>'.$row['num_players'].'</td><td><a href="ticketdetails.php?detailid='.$row['id_ticket'].'">Details</a></td></tr>';
 		}
 	}
 	else {
@@ -30,7 +30,7 @@ try {
 $tickets_per_user='';
 $dataPoints=array();
  try {
-	 $sql_tickets_per_user='SELECT username, COUNT(DISTINCT IDTicket) as number FROM UserTicket INNER JOIN User ON UserTicket.IDUser=User.IDUser GROUP BY UserTicket.IDUser';
+	 $sql_tickets_per_user='SELECT username, COUNT(DISTINCT TicketDetails.id_ticket) as number FROM MemberTicket INNER JOIN TicketDetails ON MemberTicket.id_game_details= TicketDetails.id_game_details INNER JOIN Member ON MemberTicket.id_member = Member.id GROUP BY MemberTicket.id_member';
 	 $result_tickets_per_user=$pdo->query($sql_tickets_per_user);
 	 if ($result_tickets_per_user->rowCount()>0) {
 		 while ($row=$result_tickets_per_user->fetch()) {

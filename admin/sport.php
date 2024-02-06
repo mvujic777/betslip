@@ -10,7 +10,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 require_once "../config.php"; 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 	try {
-		$sql_add_sport='INSERT INTO Sport (sport) VALUES (:sport)';
+		$sql_add_sport='INSERT INTO Sport (sport_name) VALUES (:sport)';
 		$statement=$pdo->prepare($sql_add_sport);
 		$statement->bindParam(':sport',$_REQUEST['sport']);
 		$statement->execute();
@@ -22,13 +22,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 try{
 $sport_list='';	
-$sql_sport='SELECT IDSport, sport FROM Sport';
+$sql_sport='SELECT id, sport_name FROM Sport';
 $result_sport=$pdo->query($sql_sport);
 
 	if ($result_sport->rowCount()>0) {
 	
 	 while($row=$result_sport->fetch()){
-		 $sport_list=$sport_list.'<tr><td>'. $row['sport'].'</td><td><a href="delete.php?deletesport='.$row['IDSport'].'">Delete</a></td></tr>';
+		 $sport_list=$sport_list.'<tr><td>'. $row['sport_name'].'</td><td><a href="delete.php?deletesport='.$row['id'].'">Delete</a></td></tr>';
 	 }
 	 
 	}

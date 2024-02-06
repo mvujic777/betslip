@@ -1,6 +1,7 @@
 <?php
-if(!isset($_SESSION['rolenumber'])){
-	$_SESSION['rolenumber']=0;
+// if session value is not set, set it to 0
+if(!isset($_SESSION['role_number'])){
+	$_SESSION['role_number']=0;
 }
 if(!isset($_SESSION['username'])){
 	$_SESSION['username']='';
@@ -17,7 +18,7 @@ if(!isset($_SESSION['username'])){
 									</ul>
 									</li>
 									<?php
-									if (htmlspecialchars($_SESSION['rolenumber'])==15) {
+									if (htmlspecialchars($_SESSION['role_number'])==15) {
 										echo '
 										<li>
 										<a href="#">Add</a>

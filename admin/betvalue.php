@@ -23,13 +23,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 try{
 $betvalue_list='';
-$sql_betvalue='SELECT IDBetValue, bet_value FROM BetValue ';
+$sql_betvalue='SELECT id, bet_value FROM BetValue ';
 $result_betvalue=$pdo->query($sql_betvalue);
 
 	if ($result_betvalue->rowCount()>0){
 	
 	while ($row=$result_betvalue->fetch()){
-		$betvalue_list=$betvalue_list.'<tr><td>'.$row['bet_value'].'</td><td><a href="delete.php?deletebetvalue='.$row['IDBetValue'].'">Delete</a<</td><tr>';
+		$betvalue_list=$betvalue_list.'<tr><td>'.$row['bet_value'].'</td><td><a href="delete.php?deletebetvalue='.$row['id'].'">Delete</a<</td><tr>';
 	}
 	
 	}	

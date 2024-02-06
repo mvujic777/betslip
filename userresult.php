@@ -2,6 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+session_start();
 require_once "config.php"; 
 if (isset($_GET['detailid'])) {
 	$detailid=$_GET['detailid'];
@@ -11,16 +12,16 @@ $w=0;
 $l=0;
 $inplay=0;
 try {
-	$sql_user_result='SELECT username, sport, game_name, bet_name, bv.bet_value as userbet, BetValue.bet_value AS winbet FROM UserTicket INNER JOIN User ON UserTicket.IDUser=User.IDUser INNER JOIN GameDetails ON UserTicket.IDGD=GameDetails.IDGD INNER JOIN Sport ON GameDetails.IDSport=Sport.IDSport INNER JOIN Game ON GameDetails.IDGame=Game.IDGame INNER JOIN BetName ON GameDetails.IDBetName=BetName.IDBetName INNER JOIN BetValue AS bv ON UserTicket.User_IDBetValue=bv.IDBetValue INNER JOIN BetValue ON GameDetails.IDBetValue=BetValue.IDBetValue WHERE UserTicket.IDUser='.$detailid;
+	$sql_user_result='SELECT username, sport_name, game_name, bet_name, bv.bet_value as userbet, BetValue.bet_value AS winbet FROM MemberTicket INNER JOIN TicketDetails ON MemberTicket.id_game_details = TicketDetails.id_game_details INNER JOIN GameDetails ON TicketDetails.id_game_details = GameDetails.id INNER JOIN Member ON MemberTicket.id_member = Member.id INNER JOIN Sport ON GameDetails.id_sport = Sport.id INNER JOIN Game ON GameDetails.id_game = Game.id INNER JOIN BetName ON GameDetails.id_bet_name = BetName.id INNER JOIN BetValue AS bv ON MemberTicket.id_bet_value = bv.id INNER JOIN BetValue ON GameDetails.id_bet_value = BetValue.id WHERE MemberTicket.id_member='.$detailid;
 	$result_user_result=$pdo->query($sql_user_result);
 	if ($result_user_result->rowCount()>0){
 		while ($row=$result_user_result->fetch()){
 			$user=$row['username'];
-			$user_result_list=$user_result_list.'<tr><td>'.$row['sport'].'</td><td>'.$row['game_name'].'</td><td>'.$row['bet_name'].'</td><td>'.$row['userbet'].'</td><td>'.$row['winbet'].'</td>';
+			$user_result_list=$user_result_list.'<tr><td>'.$row['sport_name'].'</td><td>'.$row['game_name'].'</td><td>'.$row['bet_name'].'</td><td>'.$row['userbet'].'</td><td>'.$row['winbet'].'</td>';
 			if ($row['userbet']==$row['winbet']){
 				$user_result_list=$user_result_list.'<td>WIN</td></tr>';
 				$w=$w+1;
-			} elseif ($row['winbet']=='In play'){
+			} elseif ($row['winbet']=='in play'){
 				$user_result_list=$user_result_list.'<td>in play</td></tr>';
 				$inplay=$inplay+1;
 			} else {
@@ -37,11 +38,11 @@ try {
 
 $dataPoints=array();
 try {
-	$sql_user_sport='SELECT sport, COUNT(GameDetails.IDSport) as number FROM UserTicket INNER JOIN GameDetails ON UserTicket.IDGD=GameDetails.IDGD INNER JOIN Sport ON GameDetails.IDSport=Sport.IDSport WHERE UserTicket.IDUser='.$detailid.' GROUP BY GameDetails.IDSport';
+	$sql_user_sport='SELECT sport_name, COUNT(GameDetails.id_sport) as number FROM MemberTicket INNER JOIN GameDetails ON MemberTicket.id_game_details = GameDetails.id INNER JOIN Sport ON GameDetails.id_sport = Sport.id WHERE MemberTicket.id_member='.$detailid.' GROUP BY GameDetails.id_sport ';
 	$result_user_sport=$pdo->query($sql_user_sport);
 	if ($result_user_sport->rowCount()>0) {
 		while ($row=$result_user_sport->fetch()){
-			$dataPoints[]=array("label"=>$row['sport'],"y"=>$row['number']);
+			$dataPoints[]=array("label"=>$row['sport_name'],"y"=>$row['number']);
 		}
 	}
 	
@@ -127,6 +128,7 @@ chart.render();
 								<!-- Content -->
 									<div id="content">
 										<section class="last">
+										<div style="overflow-x:auto;">
 										<table>
 										<thead>
 											<tr>
@@ -142,6 +144,7 @@ chart.render();
 										<?php echo $user_result_list; ?>
 										</tbody>
 										</table>
+										</div>
 										<?php echo 'total'.($w+$l+$inplay).'  win '.$w.' lose '.$l.' in play '.$inplay; ?>
 										</section>
 										<section>

@@ -10,7 +10,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 require_once "../config.php"; 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 	try {
-		$sql_add_gamename='INSERT INTO Game (game_name, start_date) VALUES (:game_name, :start_date)';
+		$sql_add_gamename='INSERT INTO Game (game_name, game_start_date) VALUES (:game_name, :start_date)';
 		$statement=$pdo->prepare($sql_add_gamename);
 		$statement->bindParam(':game_name',$_REQUEST['game_name']);
 		$statement->bindParam(':start_date',$_REQUEST['start_date']);
@@ -22,13 +22,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
 try{
 $gamename_list='';
-$sql_gamename='SELECT IDGame, game_name, start_date FROM Game';
+$sql_gamename='SELECT id, game_name, game_start_date FROM Game';
 $result_gamename=$pdo->query($sql_gamename);
 
 	if ($result_gamename->rowCount()>0){
 	
 	while ($row=$result_gamename->fetch()){
-		$gamename_list=$gamename_list.'<tr><td>'.$row['game_name'].'</td><td>'.$row['start_date'].'</td><td><a href="delete.php?deletegame='.$row['IDGame'].'">Delete</a> <a href="updategame.php?updategame='.$row['IDGame'].'">Update</a></td></tr>';
+		$gamename_list=$gamename_list.'<tr><td>'.$row['game_name'].'</td><td>'.$row['game_start_date'].'</td><td><a href="delete.php?deletegame='.$row['id'].'">Delete</a> <a href="updategame.php?updategame='.$row['id'].'">Update</a></td></tr>';
 	}
 	
 	}	

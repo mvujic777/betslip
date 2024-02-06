@@ -10,10 +10,11 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 require_once "../config.php"; 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 	try {
-	$sql_create_ticket='INSERT INTO Ticket (ticket_start_date, ticket_end_date) VALUES (:ticket_start_date,:ticket_end_date)';
+	$sql_create_ticket='INSERT INTO Ticket (ticket_start_date, ticket_end_date,ticket_description, show_ticket) VALUES (:ticket_start_date,:ticket_end_date,:ticket_description,False)';
 	$statement=$pdo->prepare($sql_create_ticket);
 	$statement->bindParam(':ticket_start_date',$_REQUEST['start_date']);
 	$statement->bindParam(':ticket_end_date',$_REQUEST['end_date']);
+	$statement->bindParam(':ticket_description',$_REQUEST['description']);
 	$statement->execute();
 	}
 	catch(PDOException $e){
@@ -22,11 +23,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 }
 $ticket_list='';
 try{
-	$sql_ticket_list='SELECT IDTicket, ticket_start_date, ticket_end_date FROM Ticket';
+	$sql_ticket_list='SELECT id, ticket_start_date, ticket_end_date FROM Ticket';
 	$result_ticket_list=$pdo->query($sql_ticket_list);
 	if ($result_ticket_list->rowCount()>0){
 		while ($row=$result_ticket_list->fetch()){
-			$ticket_list=$ticket_list.'<tr><td>'.$row['ticket_start_date'].'</td><td>'.$row['ticket_end_date'].'</td><td><a href="ticketdetails.php?detailid='.$row['IDTicket'].'">Details</a>  <a href="delete.php?deleteticket='.$row['IDTicket'].'">Delete</a></td></tr>';
+			$ticket_list=$ticket_list.'<tr><td>'.$row['ticket_start_date'].'</td><td>'.$row['ticket_end_date'].'</td><td><a href="ticketdetails.php?detailid='.$row['id'].'">Details</a>  <a href="delete.php?deleteticket='.$row['id'].'">Delete</a></td></tr>';
 		}
 	} else {
 		$ticket_list='0 tickets in database';
@@ -93,6 +94,7 @@ try{
 											<input type="datetime-local" name="start_date" required />
 											End date
 											<input type="datetime-local" name="end_date" required />
+											<textarea name="description"  maxlength="50"></textarea>
 											<input type="submit" value="Add ticket" />
 											</form>
 											</div>

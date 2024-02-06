@@ -11,7 +11,7 @@ if (isset($_GET['detailid'])){
 $leaderboard_date='';
 $leaderboard_details='';
 try {
-	$sql_leaderboard_date='SELECT  l_start, l_end FROM Leaderboard WHERE IDLeaderboard='.$detailid;
+	$sql_leaderboard_date='SELECT  l_start, l_end FROM Leaderboard WHERE id='.$detailid;
 	$result_leaderboard_date=$pdo->query($sql_leaderboard_date);
 	if ($result_leaderboard_date->rowCount()>0) {
 		while ($row=$result_leaderboard_date->fetch()){
@@ -23,25 +23,25 @@ try {
 		$leaderboard_date= '<tr><td>Nothing in database</td></tr>';
 	}
 } catch(PDOException $e){
-    die("ERROR: Could not able to execute $sql_leaderboard_date. " . $e->getMessage());
+    die('ERROR: Could not able to execute $sql_leaderboard_date. '. $e->getMessage());
 	}
 $dataPoints=array();
 
 try {
-	$sql_leaderboard_users='SELECT DISTINCT (username), UserTicket.IDUser FROM UserTicket INNER JOIN User ON UserTicket.IDUser=User.IDUser INNER JOIN GameDetails ON UserTicket.IDGD=GameDetails.IDGD INNER JOIN Game ON GameDetails.IDGame=Game.IDGame WHERE Game.start_date >" '.$l_start.'" AND Game.start_date <" '.$l_end.'"';
+	$sql_leaderboard_users='SELECT DISTINCT (username), MemberTicket.id_member FROM MemberTicket INNER JOIN TicketDetails ON MemberTicket.id_game_details= TicketDetails.id_game_details INNER JOIN GameDetails ON TicketDetails.id_game_details = GameDetails.id INNER JOIN Member ON MemberTicket.id_member = Member.id INNER JOIN Game ON GameDetails.id_game = Game.id WHERE game_start_date > " '.$l_start.'" AND game_start_date <" '.$l_end.'"';
 	$result_leaderboard_users=$pdo->query($sql_leaderboard_users);
 	if ($result_leaderboard_users->rowCount()>0) {
 		while ($row=$result_leaderboard_users->fetch()) {
 			$win_points=0;
 			$max_points=0;
-			$sql_leaderboard_points='SELECT bv.bet_value as userbet, BetValue.bet_value AS winbet FROM UserTicket INNER JOIN GameDetails on UserTicket.IDGD=GameDetails.IDGD INNER JOIN Game ON GameDetails.IDGame=Game.IDGame INNER JOIN BetName ON GameDetails.IDBetName=BetName.IDBetName INNER JOIN BetValue AS bv ON UserTicket.User_IDBetValue=bv.IDBetValue INNER JOIN BetValue ON GameDetails.IDBetValue=BetValue.IDBetValue WHERE UserTicket.IDUser='.$row['IDUser'].' AND Game.start_date > "'.$l_start.'" AND Game.start_date < "'.$l_end.'"';
+			$sql_leaderboard_points='SELECT bv.bet_value as userbet, BetValue.bet_value AS winbet FROM MemberTicket INNER JOIN TicketDetails ON MemberTicket.id_game_details=TicketDetails.id_game_details INNER JOIN GameDetails on TicketDetails.id_game_details = GameDetails.id INNER JOIN Game ON GameDetails.id_game = Game.id INNER JOIN BetName ON GameDetails.id_bet_name = BetName.id INNER JOIN BetValue AS bv ON MemberTicket.id_bet_value = bv.id INNER JOIN BetValue ON GameDetails.id_bet_value = BetValue.id WHERE MemberTicket.id_member='.$row['id_member'].' AND game_start_date > "'.$l_start.'" AND game_start_date <"'.$l_end.'"';
 			$result_leaderboard_points=$pdo->query($sql_leaderboard_points);
 			if ($result_leaderboard_points->rowCount()>0) {
 				while ($row1=$result_leaderboard_points->fetch()) {
 						if ($row1['userbet']==$row1['winbet']){
 						$win_points=$win_points+10;
 						$max_points=$max_points+10;
-						} elseif ($row1['winbet']=='In play'){
+						} elseif ($row1['winbet']=='in play'){
 						$max_points=$max_points+10;
 						} else {
 						$max_points=$max_points+10;
@@ -57,7 +57,7 @@ try {
 		$leaderboard_details= '<tr><td>Nothing in database</td></tr>';
 	}
 } catch(PDOException $e){
-    die("ERROR: Could not able to execute $sql_leaderboard_users. " . $e->getMessage());
+    die('ERROR: Could not able to execute $sql_leaderboard_users. ' . $e->getMessage());
 	}
 $keys = array_column($dataPoints, 'points');
 array_multisort($keys, SORT_DESC, $dataPoints);
@@ -112,10 +112,7 @@ array_multisort($keys, SORT_DESC, $dataPoints);
 								<!-- Content -->
 									<div id="content">
 										<section class="last">
-											<h4>Rewards for three best players</h4>
-											First reward 10000 BTC satoshi
-											<br>Second reward 5000 BTC satoshi
-											<br>Third reward 2000 BTC satoshi
+											
 											<table>
 											<thead>
 												<tr>

@@ -6,11 +6,11 @@ session_start();
 require_once "config.php"; 
 $ticket_list='';
 try{
-	$sql_ticket_list='SELECT IDTicket, ticket_start_date, ticket_end_date FROM Ticket WHERE ticket_end_date > NOW()';
+	$sql_ticket_list='SELECT id, ticket_start_date, ticket_end_date FROM Ticket WHERE ticket_end_date> NOW() AND show_ticket=1';
 	$result_ticket_list=$pdo->query($sql_ticket_list);
 	if ($result_ticket_list->rowCount()>0){
 		while ($row=$result_ticket_list->fetch()){
-			$ticket_list=$ticket_list.'<div class="col-4 col-12-medium"><section class="box feature"><div class="inner"><header><h2>'.date('F d', strtotime($row['ticket_start_date'])).' - '.date('F d', strtotime($row['ticket_end_date'])).'</h2></header><a href="userplacebet.php?detailid='.$row['IDTicket'].'" class="button icon fa-file-alt">Place bet</a></div></section></div>';
+			$ticket_list=$ticket_list.'<div class="col-4 col-12-medium"><section class="box feature"><div class="inner"><header><h2>'.date('F d', strtotime($row['ticket_start_date'])).' - '.date('F d', strtotime($row['ticket_end_date'])).'</h2></header><a href="userplacebet.php?detailid='.$row['id'].'" class="button icon fa-file-alt">Place bet</a></div></section></div>';
 		}
 	} else {
 		$ticket_list= '0 tickets in database';
@@ -36,7 +36,7 @@ try{
 
 						<!-- Logo -->
 							<div id="logo">
-								<h1><a href="index.html">Verti</a></h1>
+								<h1><a href="index.php">Verti</a></h1>
 								<span>by HTML5 UP</span>
 							</div>
 

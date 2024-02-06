@@ -10,11 +10,11 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 require_once "../config.php"; 
 try{
 $sport_list='';	
-$sql_list='SELECT IDSport, sport FROM Sport';						
+$sql_list='SELECT id, sport_name FROM Sport';						
 $result_list=$pdo->query($sql_list);
 if ($result_list->rowCount()>0) {	
 	 while($row=$result_list->fetch()){
-		 $sport_list=$sport_list.'<option value="'.$row['IDSport'].'">'.$row['sport'].'</option>';
+		 $sport_list=$sport_list.'<option value="'.$row['id'].'">'.$row['sport_name'].'</option>';
 	 }	 
 }
  else {
@@ -22,11 +22,11 @@ if ($result_list->rowCount()>0) {
  }
 
 $gamename_list='';
-$sql_list='SELECT IDGame, game_name FROM Game';
+$sql_list='SELECT id, game_name, game_start_date FROM Game';
 $result_list=$pdo->query($sql_list);
 if ($result_list->rowCount()>0) {	
 	 while($row=$result_list->fetch()){
-		 $gamename_list=$gamename_list.'<option value="'.$row['IDGame'].'">'.$row['game_name'].'</option>';
+		 $gamename_list=$gamename_list.'<option value="'.$row['id'].'">'.$row['game_name'].'('.$row['game_start_date'].')</option>';
 	 }	 
 }
  else {
@@ -34,11 +34,11 @@ if ($result_list->rowCount()>0) {
  }
 
 $betname_list='';
-$sql_list='SELECT IDBetName, bet_name FROM BetName';
+$sql_list='SELECT id, bet_name FROM BetName';
 $result_list=$pdo->query($sql_list);
 if ($result_list->rowCount()>0) {	
 	 while($row=$result_list->fetch()){
-		 $betname_list=$betname_list.'<option value="'.$row['IDBetName'].'">'.$row['bet_name'].'</option>';
+		 $betname_list=$betname_list.'<option value="'.$row['id'].'">'.$row['bet_name'].'</option>';
 	 }	 
 }
  else {
@@ -46,11 +46,11 @@ if ($result_list->rowCount()>0) {
  }
  
 $betvalue_list='';
-$sql_list='SELECT IDBetValue, bet_value FROM BetValue';
+$sql_list='SELECT id, bet_value FROM BetValue';
 $result_list=$pdo->query($sql_list);
 if ($result_list->rowCount()>0) {	
 	 while($row=$result_list->fetch()){
-		 $betvalue_list=$betvalue_list.'<input type="checkbox" name="betvalue[]" value="'.$row['IDBetValue'].'">'.$row['bet_value'];
+		 $betvalue_list=$betvalue_list.'<input type="checkbox" name="betvalue[]" value="'.$row['id'].'"> '.$row['bet_value'].' ';
 	 }	 
 }
  else {
@@ -63,14 +63,14 @@ if ($result_list->rowCount()>0) {
 #bvn is variable add so we can add multiple betvalue to one game
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 	try {
-		#select last bvn in table
-		$sql_bvbn='SELECT BVBN FROM BVBN ORDER BY IDBVBN DESC LIMIT 1';
+		#select last bvbn in table
+		$sql_bvbn='SELECT bvbn FROM BetValueBetName ORDER BY id DESC LIMIT 1';
 		$result_bvbn=$pdo->query($sql_bvbn);
 		
 		if ($result_bvbn->rowCount()>0) {
 	
 			while($row=$result_bvbn->fetch()){
-			$bvbn=($row['BVBN']+1);
+			$bvbn=($row['bvbn']+1);
 			}	 
 		}
 		else {
@@ -79,28 +79,29 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 		}
 		#inserting game options in table BVBN
 		# here we generate insert into statement from two parts, part1 is fixed part, part2 are values for each row
-		$part1='INSERT INTO BVBN (IDBetValue, BVBN) VALUES';
+		$part1='INSERT INTO BetValueBetName (id_bet_value, bvbn) VALUES';
 		$part2='';
 		for ($x = 0; $x < count($_POST['betvalue']); $x++) {
-		$part2=$part2. '(:IDBetValue'.$x.',:BVBN),';
+		$part2=$part2. '(:id_bet_value'.$x.',:bvbn),';
 			}
 		#delete last coma sign in part 2
 		$sql_add_bvbn=substr($part1.' '.$part2,0,-1);
 		$statement=$pdo->prepare($sql_add_bvbn);
-		$statement->bindParam('BVBN',$bvbn);
+		$statement->bindParam('bvbn',$bvbn);
 		#count post_betvalue counts how many betvalue options one game have example 1,x,2 are three values and ve generate this many statement bindParam
 		# post method used since it is array
 		for ($x = 0; $x < count($_POST['betvalue']); $x++) {
-		$statement->bindParam((':IDBetValue'.$x),($_POST['betvalue'][$x]));	
+		$statement->bindParam((':id_bet_value'.$x),($_POST['betvalue'][$x]));	
 		}
 		$statement->execute();
 		#inserting game rest of games details, In play value check in database and change it at end of line
-		$sql_add_gamedetails='INSERT INTO GameDetails (IDGame, IDSport, BVBN, IDBetName, IDBetValue) VALUES (:IDGame, :IDSport, :BVBN, :IDBetName, 36)';
+		#1 is default value for inplay
+		$sql_add_gamedetails='INSERT INTO GameDetails (id_game, id_sport, bvbn, id_bet_name, id_bet_value) VALUES (:id_game, :id_sport, :bvbn, :id_bet_name, 1)';
 		$statement=$pdo->prepare($sql_add_gamedetails);
-		$statement->bindParam(':IDGame',$_REQUEST['game']);
-		$statement->bindParam(':IDSport',$_REQUEST['sport']);
-		$statement->bindParam('BVBN',$bvbn);
-		$statement->bindParam('IDBetName',$_REQUEST['betname']);
+		$statement->bindParam(':id_game',$_REQUEST['game']);
+		$statement->bindParam(':id_sport',$_REQUEST['sport']);
+		$statement->bindParam('bvbn',$bvbn);
+		$statement->bindParam('id_bet_name',$_REQUEST['betname']);
 		$statement->execute();
 	
 	} catch(PDOException $e){
@@ -111,16 +112,16 @@ $game_details_list='';
 $bvbn_detail_list='';
 
 try {
-	$sql_game_details='SELECT IDGD, game_name, sport, BVBN, bet_name, bet_value FROM GameDetails INNER JOIN Game ON GameDetails.IDGame=Game.IDGame INNER JOIN Sport ON GameDetails.IDSport=Sport.IDSport INNER JOIN BetName ON GameDetails.IDBetName=BetName.IDBetName INNER JOIN BetValue ON GameDetails.IDBetValue=BetValue.IDBetValue';
+	$sql_game_details='SELECT GameDetails.id, game_name, sport_name, bvbn, bet_name, bet_value FROM GameDetails INNER JOIN Game ON GameDetails.id_game=Game.id INNER JOIN Sport ON GameDetails.id_sport=Sport.id INNER JOIN BetName ON GameDetails.id_bet_name=BetName.id INNER JOIN BetValue ON GameDetails.id_bet_value=BetValue.id';
 	$result=$pdo->query($sql_game_details);
 	if ($result->rowCount()>0) {
 	
 	 while($row=$result->fetch()){
 				
-		$game_details_list=$game_details_list.'<tr><td>'.$row['game_name'].'</td><td>'.$row['sport'].'</td><td>'.$row['bet_name'].'</td><td>'.$row['bet_value'].'</td>';	
-		$idgd='<td><a href="delete.php?deletegamedetail='.$row['IDGD'].'&deletebvbn='.$row['BVBN'].'">Delete</a><a href="updatewbet.php?updatewbet='.$row['IDGD'].'">Update</a></td>';
+		$game_details_list=$game_details_list.'<tr><td>'.$row['game_name'].'</td><td>'.$row['sport_name'].'</td><td>'.$row['bet_name'].'</td><td>'.$row['bet_value'].'</td>';	
+		$idgd='<td><a href="delete.php?deletegamedetail='.$row['id'].'&deletebvbn='.$row['bvbn'].'">Delete</a><a href="updatewbet.php?updatewbet='.$row['id'].'">Update</a></td>';
 		$bvbn_detail_list='';
-		$sql_bvb_details='SELECT bet_value FROM BVBN  INNER JOIN BetValue ON BVBN.IDBetValue=BetValue.IDBetValue WHERE BVBN='.$row['BVBN'];
+		$sql_bvb_details='SELECT bet_value FROM BetValueBetName  INNER JOIN BetValue ON BetValueBetName.id_bet_value=BetValue.id WHERE bvbn='.$row['bvbn'];
 		$result_bvbn_details=$pdo->query($sql_bvb_details);
 		
 			while($row=$result_bvbn_details->fetch()){

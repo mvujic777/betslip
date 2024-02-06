@@ -29,7 +29,7 @@ require_once "../config.php";
 						<!-- Logo -->
 							<div id="logo">
 								<h1><a href="index.html">Verti</a></h1>
-								<span>by HTML5 UP</span>
+								<span>by HTML55 UP</span>
 							</div>
 
 						<!-- Nav -->

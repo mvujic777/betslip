@@ -18,10 +18,10 @@ if (isset($_GET["updatewbet"])){
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 	
 	try { 
-	$sql_update_wbet='UPDATE GameDetails SET IDBetValue=:IDBetValue WHERE IDGD='.$_REQUEST['updatewbet'];
+	$sql_update_wbet='UPDATE GameDetails SET id_bet_value=:id_bet_value WHERE GameDetails.id='.$_REQUEST['updatewbet'];
 	$statement=$pdo->prepare($sql_update_wbet);
 	# you take post method instead of request when you receive data from checkbox since checkbox works as array
-	$statement->bindParam('IDBetValue', ($_POST['betvalue'][0]));
+	$statement->bindParam('id_bet_value', ($_POST['betvalue'][0]));
 	$statement->execute();
 	echo 'Data updated';
 	} catch (PDOException $e){
@@ -34,7 +34,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 $game_details_list='';
 $bvbn_detail_list='';
 try {
-	$sql_game_details='SELECT game_name, bet_name, BVBN FROM GameDetails INNER JOIN Game ON GameDetails.IDGame=Game.IDGame INNER JOIN BetName ON GameDetails.IDBetName=BetName.IDBetName WHERE IDGD='.$idgd;
+	$sql_game_details='SELECT game_name, bet_name, bvbn FROM GameDetails INNER JOIN Game ON GameDetails.id_game=Game.id INNER JOIN BetName ON GameDetails.id_bet_name=BetName.id WHERE GameDetails.id='.$idgd;
 	$result=$pdo->query($sql_game_details);
 	if ($result->rowCount()>0) {
 		
@@ -42,11 +42,11 @@ try {
 			$game_details_list=$game_details_list.''.$row['game_name'].'   '.$row['bet_name'];
 			
 			$bvbn_detail_list='';
-			$sql_bvb_details='SELECT BVBN.IDBetValue, bet_value FROM BVBN  INNER JOIN BetValue ON BVBN.IDBetValue=BetValue.IDBetValue WHERE BVBN='.$row['BVBN'];
+			$sql_bvb_details='SELECT BetValueBetName.id_bet_value, bet_value FROM BetValueBetName  INNER JOIN BetValue ON BetValueBetName.id_bet_value=BetValue.id WHERE bvbn='.$row['bvbn'];
 			$result_bvbn_details=$pdo->query($sql_bvb_details);
 		
 			while($row=$result_bvbn_details->fetch()){
-				$bvbn_detail_list=$bvbn_detail_list.'<input type="checkbox" name="betvalue[]" value="'.$row['IDBetValue'].'">'.$row['bet_value'];
+				$bvbn_detail_list=$bvbn_detail_list.' <input type="checkbox" name="betvalue[]" value="'.$row['id_bet_value'].'"> '.$row['bet_value'];
 			}
 			
 			$game_details_list=$game_details_list.''.$bvbn_detail_list;
