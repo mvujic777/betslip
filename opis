@@ -1,0 +1,14 @@
+  Opis projekta
+Projekt se bazira na principu rada kladionice. Igrači se ne registriraju i ne rade polog, nego se klade na gotove listiće koje sastavlja administrator. Igrači koji najviše pogode parova, slažu se na ljestvice i nagrađuju.
+
+  Klijentska strana
+Na početnoj stranici se nalaze listići. Listići su određeni datumima od kada do kada su aktivni. Zadnji dan aktivnosti treba biti kada počinje zadnja utakmica. Nakon isteka listića, listić više nije vidljiv na početnoj stranici. Unutar svakog listića se nalaze parovi s ponudom tj. ishodima utakmice. Klijent ne može birati na koje će se utakmici kladiti nego se kladi na ishod utakmica koje je izabrao administrator. Klijent se ne registrira nego izabere ishode, upiše korisničko ime, email i adresu faucetpay novčanika. Nakon slanja oklade čeka završetak utakmice i administratora koji će označiti točne rezultate.
+(Trenutno dodani listići jako dugo traju kako bi korisnici mogli vidjeti bez dodavanja novih)
+Rezultate može provjeriti u gornjem izborniku klikom na Result – Tickets ili Result – Leaderboard.
+U prvome izboru prati rezultate po listiću. Za svaki pogođeni par dobije 10 bodova. Na vrhu se nalazi onaj koji je prvi odigrao. Na istoj stranici se nalazi i popis igrača i njihova statistika – na koje se utakmice kladio, igračeva prognoza i točan ishod, ukupan broj prognoza, broj pogođenih, promašenih i aktivnih. Grafički je prikazan broj oklada po sportu.
+Na drugome izboru se nalazi ljestvica. Ljestvica je određena datumima, početni i konačni. Ljestvica sadržava sve rezultate listića iz raspona datuma kojim je određena. Na temelju rezultata listića slažu se rezultati igrača. Na vrhu se nalazi igrač s najviše bodova.
+
+  Administratorska strana
+Administrator dodaje sportove na stranici Sport. Na stranici Betname dodaje imena oklada poput cijela utakmica, korneri, duple pogreške. Na stranici Betvalue dodaje vrijednosti oklada poput 1, X, 2, preko 8, manje od 8, 8. Na stranici Game dodaje imena utakmica s početnim datumom npr. Arsenal – Manchester City. Klikom na Update možete ispraviti ime utakmice i dodati vrijeme završetka utakmice. Na stranici Insert game details povezujete utakmicu sa sportom, imenom oklade i vrijednostima oklade. Na istoj stranici klikom na Update na kraju utakmice označavate pobjednički ishod. Ako ste krivo povezali utakmicu sa sportom ili okladom, obrišite utakmicu klikom na Delete i ponovno ju povežite.
+Na stranici Create ticket kreirate listić određivanje početnog i konačnog datuma. Listić se pojavljuje na popisu i klikom na details dodajete utakmice na listić. Ako ste krivu utakmicu dodali, brišete utakmicu i ponovno ju dodajte. Listić je automatski prikazan na početnoj stranici.
+Na stranici Leaderboard kreirate ljestvice određivanjem početnog i konačnog datuma. Ljestvica prikuplja rezultate svih utakmica iz zadanog vremenog raspona. Klikom na Details prikazuje se trenutna lista korisnika poslaganih po bodovima.
